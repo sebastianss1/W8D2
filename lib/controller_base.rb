@@ -8,14 +8,24 @@ class ControllerBase
 
   # Setup the controller
   def initialize(req, res)
+    @req, @res = req, res
+    @params = route_params.merge(req.params)
+    @already_built_response = false
+    @@protect_from_forgery ||= false
   end
 
   # Helper method to alias @already_built_response
   def already_built_response?
+      @already_built_response
   end
 
   # Set the response status code and header
   def redirect_to(url)
+     prepare_render_or_redirect
+    @res.status = 302
+    @res["Location"] = url
+
+    nil
   end
 
   # Populate the response with content.
